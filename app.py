@@ -66,22 +66,6 @@ class Transaction(db.Model):
     status = db.Column(db.String(20), default='success')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-# -----------------------
-# CREATE TABLES
-# -----------------------
-
-if __name__ == "__main__":
-    with app.app_context():
-        for i in range(10):
-            try:
-                db.create_all()
-                print("Database connected successfully")
-                break
-            except OperationalError:
-                print("Database not ready, retrying...")
-                time.sleep(3)
-
-    app.run(host="0.0.0.0", port=5000)
 
 # -----------------------
 # REGISTER API
@@ -301,4 +285,14 @@ def get_me():
 # -----------------------
 
 if __name__ == "__main__":
+    with app.app_context():
+        for i in range(10):
+            try:
+                db.create_all()
+                print("Database connected successfully")
+                break
+            except OperationalError:
+                print("Database not ready, retrying...")
+                time.sleep(3)
+
     app.run(host="0.0.0.0", port=5000)
