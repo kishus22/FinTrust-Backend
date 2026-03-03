@@ -1,0 +1,27 @@
+services:
+  db:
+    image: postgres:15
+    container_name: fintrust-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: fintrust
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    container_name: fintrust-backend
+    restart: always
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/fintrust
+    ports:
+      - "5000:5000"
+
+volumes:
+  postgres_data:

@@ -1,5 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+import os
+import time
+from sqlalchemy.exc import OperationalError
 from flask_jwt_extended import (
     JWTManager,
     create_access_token,
@@ -16,7 +19,11 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///fintrust.db'
+
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
+    "DATABASE_URL",
+    "sqlite:///fintrust.db"
+)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'super-secret-key'
 
@@ -63,8 +70,18 @@ class Transaction(db.Model):
 # CREATE TABLES
 # -----------------------
 
-with app.app_context():
-    db.create_all()
+if __name__ == "__main__":
+    with app.app_context():
+        for i in range(10):
+            try:
+                db.create_all()
+                print("Database connected successfully")
+                break
+            except OperationalError:
+                print("Database not ready, retrying...")
+                time.sleep(3)
+
+    app.run(host="0.0.0.0", port=5000)
 
 # -----------------------
 # REGISTER API

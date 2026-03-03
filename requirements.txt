@@ -2,3 +2,4 @@ flask
 flask-jwt-extended
 flask-sqlalchemy
 werkzeug
+psycopg2-binary
